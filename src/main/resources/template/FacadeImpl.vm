@@ -1,0 +1,16 @@
+#set ($domain = $!domainName.substring(0,1).toLowerCase()+$!domainName.substring(1))
+package $!{packageName}.facade.impl;
+
+import $!{packageName}.facade.$!{domainName}Facade;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class $!{domainName}FacadeImpl implements $!{domainName}Facade {
+	@Autowired
+	$!{domainName}Service $!{domain}Service;
+}

@@ -1,0 +1,20 @@
+#set ($domain = $!domainName.substring(0,1).toLowerCase()+$!domainName.substring(1))
+package $!{packageName}.service;
+
+import java.util.List;
+
+import $!{packageName}.entity.$!{domainName};
+
+public interface $!{domainName}Service {
+	int deleteByPrimaryKey(Integer id);
+
+	int insertSelective($!{domainName} record);
+
+	$!{domainName} selectByPrimaryKey(Integer id);
+
+	int updateByPrimaryKeySelective($!{domainName} record);
+
+	List<$!{domainName}> query($!{domainName} param);
+
+	void batchInsert(List<$!{domainName}> $!{domain}s);
+}

@@ -1,0 +1,51 @@
+#set ($domain = $!domainName.substring(0,1).toLowerCase()+$!domainName.substring(1))
+package $!{packageName}.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.kingdee.base.constant.enums.IsDelEnum;
+import $!{packageName}.dao.$!{domainName}Mapper;
+import $!{packageName}.entity.$!{domainName};
+import $!{packageName}.service.$!{domainName}Service;
+
+@Service
+public class $!{domainName}ServiceImpl implements $!{domainName}Service {
+	@Autowired
+	$!{domainName}Mapper $!{domain}Mapper;
+
+	@Override
+	public int deleteByPrimaryKey(Integer id) {
+		$!{domainName} record = new $!{domainName}();
+		record.setId(id);
+		record.setIsDel(IsDelEnum.YES.getCode());
+		return updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public int insertSelective($!{domainName} record) {
+		return $!{domain}Mapper.insertSelective(record);
+	}
+
+	@Override
+	public $!{domainName} selectByPrimaryKey(Integer id) {
+		return $!{domain}Mapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public int updateByPrimaryKeySelective($!{domainName} record) {
+		return $!{domain}Mapper.updateByPrimaryKeySelective(record);
+	}
+
+	@Override
+	public List<$!{domainName}> query($!{domainName} param) {
+		return $!{domain}Mapper.query(param);
+	}
+
+	@Override
+	public void batchInsert(List<$!{domainName}> $!{domain}s) {
+		$!{domain}Mapper.batchInsert($!{domain}s);
+	}
+}

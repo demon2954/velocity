@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="$!{packageName}.dao.$!{domainName}Mapper" >
+	<resultMap id="BaseResultMap" type="$!{packageName}.entity.$!{domainName}" >
+#foreach($entityProperty in $entityPropertys)
+#if($velocityCount == 1)
+		<id column="$!{idDbName}" property="$!{idJavaName}" jdbcType="$!{idDbType}" />
+#else
+		<result column="$!{entityProperty.dbName}" property="$!{entityProperty.javaName}" jdbcType="$!{entityProperty.dbType}" />
+#end    
+#end
+	</resultMap>
+	<sql id="Base_Column_List" >
+#foreach($entityProperty in $entityPropertys)#if($velocityCount == 1)		#end$!{entityProperty.dbName}#if($velocityCount != $entityPropertys.size()), #end
+#end
+  
+	</sql>
+  
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="$!{idJavaType}" >
+		select 
+		<include refid="Base_Column_List" />
+		from $!{tableName}
+		where $!{idDbName} = #{$!{idJavaName},jdbcType=$!{idDbType}}
+	</select>
+  
+	<delete id="deleteByPrimaryKey" parameterType="$!{idJavaType}" >
+		delete from $!{tableName}
+		where $!{idDbName} = #{$!{idJavaName},jdbcType=$!{idDbType}}
+	</delete>
+  
+	<insert id="insertSelective" parameterType="$!{packageName}.entity.$!{domainName}" >
+		insert into $!{tableName}
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+#foreach($entityProperty in $entityPropertys)
+			<if test="$!{entityProperty.javaName} != null" >
+				$!{entityProperty.dbName},
+			</if>
+#end
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+#foreach($entityProperty in $entityPropertys)
+			<if test="$!{entityProperty.javaName} != null" >
+    			#{$!{entityProperty.javaName},jdbcType=$!{entityProperty.dbType}},
+    		</if>
+#end
+		</trim>
+	</insert>
+  
+	<update id="updateByPrimaryKeySelective" parameterType="$!{packageName}.entity.$!{domainName}" >
+    	update $!{tableName}
+    	<set >
+#foreach($entityProperty in $entityPropertys)
+#if($velocityCount != 1)
+			<if test="$!{entityProperty.javaName} != null" >
+				$!{entityProperty.dbName} = #{$!{entityProperty.javaName},jdbcType=$!{entityProperty.dbType}},
+			</if>
+#end   
+#end
+		</set>
+		where $!{idDbName} = #{$!{idJavaName},jdbcType=$!{idDbType}}
+	</update>
+  
+	<select id="query" parameterType="$!{packageName}.entity.$!{domainName}" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from $!{tableName}
+		where is_del = 0
+#foreach($entityProperty in $entityPropertys)
+#if($velocityCount != 1)
+		<if test="$!{entityProperty.javaName} != null">
+			and $!{entityProperty.dbName} = #{$!{entityProperty.javaName},jdbcType=$!{entityProperty.dbType}}
+		</if>
+#end   
+#end
+	</select>
+
+	<insert id="batchInsert" parameterType="java.util.List">
+		INSERT INTO liby_education (#foreach($entityProperty in $entityPropertys)#if($velocityCount != 1 && $entityProperty.dbName != 'create_time' && $entityProperty.dbName != 'update_time' && $entityProperty.dbName != 'is_del')$!{entityProperty.dbName}#if($velocityCount != $entityPropertys.size()), #end#end#end) VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#foreach($entityProperty in $entityPropertys)#if($velocityCount != 1 && $entityProperty.dbName != 'create_time' && $entityProperty.dbName != 'update_time' && $entityProperty.dbName != 'is_del')#{item.$!{entityProperty.javaName}}#if($velocityCount != $entityPropertys.size()), #end#end#end)
+		</foreach>
+	</insert>
+</mapper>

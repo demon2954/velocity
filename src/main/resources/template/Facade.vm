@@ -1,0 +1,5 @@
+#set ($domain = $!domainName.substring(0,1).toLowerCase()+$!domainName.substring(1))
+package $!{packageName}.facade;
+
+public interface $!{domainName}Facade {
+}

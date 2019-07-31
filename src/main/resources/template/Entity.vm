@@ -1,0 +1,19 @@
+#set ($domain = $!domainName.substring(0,1).toLowerCase()+$!domainName.substring(1))
+package $!{packageName}.entity;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import lombok.Data;
+
+@Data
+public class $!{domainName} {
+#foreach($entityProperty in $entityPropertys)
+    /**
+     * $!{entityProperty.comment}
+     */
+	private $!{entityProperty.javaShortType} $!{entityProperty.javaName};
+	
+#end
+}
