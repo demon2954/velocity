@@ -3,6 +3,8 @@ package zone.excem.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import zone.excem.bean.EntityProperty;
 import zone.excem.util.StringUtil;
 
@@ -12,6 +14,7 @@ public class EntityMaker {
 		List<String> columnNames = DatabaseUtil.getColumnNames(tableName);
 		List<String> columnTypes = DatabaseUtil.getColumnTypes(tableName);
 		List<String> columnComments = DatabaseUtil.getColumnComments(tableName);
+		List<String> idNames = DatabaseUtil.getIdName(tableName);
 
 		int size = columnNames.size();
 		for (int i = 0; i < size; i++) {
@@ -25,6 +28,14 @@ public class EntityMaker {
 			one.setJavaShortType(getJavaShortType(columnType));
 			one.setDbType(getDbType(columnType));
 			one.setComment(StringUtil.isBlank(columnComment) ? "" : columnComment);
+			if (CollectionUtils.isNotEmpty(idNames)) {
+				for (String id : idNames) {
+					if (columnName.equals(id)) {
+						one.setPrimaryKey(true);
+						break;
+					}
+				}
+			}
 			list.add(one);
 		}
 		return list;
@@ -34,6 +45,8 @@ public class EntityMaker {
 		switch (columnType) {
 		case "INT":
 			return "INTEGER";
+		case "DATETIME":
+			return "TIMESTAMP";
 		default:
 			return columnType;
 		}
@@ -48,9 +61,10 @@ public class EntityMaker {
 		case "VARCHAR":
 			return "String";
 		case "TIMESTAMP":
+		case "DATETIME":
 			return "Date";
 		case "TINYINT":
-			return "Short";
+			return "Byte";
 		case "DOUBLE":
 			return "Double";
 		default:
@@ -67,11 +81,12 @@ public class EntityMaker {
 		case "VARCHAR":
 			return "java.lang.String";
 		case "TIMESTAMP":
+		case "DATETIME":
 			return "java.util.Date";
 		case "TINYINT":
-			return "java.util.Short";
+			return "java.lang.Byte";
 		case "DOUBLE":
-			return "java.util.Double";
+			return "java.lang.Double";
 		default:
 			return columnType;
 		}

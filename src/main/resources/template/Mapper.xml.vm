@@ -28,7 +28,7 @@
 		where $!{idDbName} = #{$!{idJavaName},jdbcType=$!{idDbType}}
 	</delete>
   
-	<insert id="insertSelective" parameterType="$!{packageName}.entity.$!{domainName}" >
+	<insert id="insertSelective" parameterType="$!{packageName}.entity.$!{domainName}" useGeneratedKeys="true" keyProperty="$!{idJavaName}">
 		insert into $!{tableName}
 		<trim prefix="(" suffix=")" suffixOverrides="," >
 #foreach($entityProperty in $entityPropertys)

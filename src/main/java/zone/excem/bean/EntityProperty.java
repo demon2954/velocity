@@ -10,4 +10,5 @@ public class EntityProperty {
 	private String dbName;
 	private String dbType;
 	private String comment;
+	private boolean primaryKey = false;
 }

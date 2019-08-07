@@ -187,6 +187,41 @@ public class DatabaseUtil {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+					closeConnection(conn);
+				} catch (SQLException e) {
+					e.printStackTrace();
+					System.out.println("getColumnComments close ResultSet and connection failure");
+				}
+			}
+		}
+		return columnComments;
+	}
+
+	/**
+	 * 获取表中的主键
+	 * 
+	 * @param tableName
+	 * @return
+	 */
+	public static List<String> getIdName(String tableName) {
+		List<String> columnTypes = new ArrayList<String>();
+		// 与数据库的连接
+		Connection conn = getConnection();
+		PreparedStatement pStemt = null;
+		String tableSql = "SELECT column_name FROM INFORMATION_SCHEMA.`KEY_COLUMN_USAGE` WHERE table_name = '" + tableName + "' AND constraint_name = 'PRIMARY'";
+		List<String> columnComments = new ArrayList<String>();// 列名注释集合
+		ResultSet rs = null;
+		try {
+			pStemt = conn.prepareStatement(tableSql);
+			rs = pStemt.executeQuery(tableSql);
+			while (rs.next()) {
+				columnComments.add(rs.getString("column_name"));
+			}
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			if (rs != null) {
@@ -203,14 +238,16 @@ public class DatabaseUtil {
 	}
 
 	public static void main(String[] args) {
-		List<String> tableNames = getTableNames();
+//		List<String> tableNames = getTableNames();
 //		System.out.println("tableNames:" + tableNames);
-		for (String tableName : tableNames) {
-			System.out.println("tableName:" + tableName);
-			System.out.println("ColumnNames:" + getColumnNames(tableName));
-			System.out.println("ColumnTypes:" + getColumnTypes(tableName));
-			System.out.println("ColumnComments:" + getColumnComments(tableName));
-			System.out.println();
-		}
+//		for (String tableName : tableNames) {
+//			System.out.println("tableName:" + tableName);
+//			System.out.println("ColumnNames:" + getColumnNames(tableName));
+//			System.out.println("ColumnTypes:" + getColumnTypes(tableName));
+//			System.out.println("ColumnComments:" + getColumnComments(tableName));
+//			System.out.println();
+//		}
+		List<String> idName = getIdName("liby_dept_type");
+		System.out.println();
 	}
 }

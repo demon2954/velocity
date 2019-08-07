@@ -24,13 +24,15 @@ public class Main {
 	static String packageName = "com.kingdee.liby";// 类包
 	static String templateDir = "\\src\\main\\resources\\template\\";
 	static String sourcePath = System.getProperty("user.dir") + templateDir;
-	static String resultDir = "\\src\\main\\java\\out";
+	static String resultDir = "\\src\\main\\java";
 	static String targetPath = System.getProperty("user.dir") + resultDir + "\\" + packageName.replace(".", "\\");
 
 	public static void main(String[] args) throws Exception {
-		String tableName = "liby_employee";
-		makeJava(tableName);
-		makeXml(tableName);
+		String[] tableNames = new String[] { "liby_training" };
+		for (String tableName : tableNames) {
+			makeJava(tableName);
+			makeXml(tableName);
+		}
 	}
 
 	public static void makeJava(String tableName) throws IOException {
@@ -85,8 +87,18 @@ public class Main {
 		String domainName = StringUtil.underlineToCamel(tableName, true);
 		
 		List<EntityProperty> entityPropertys = EntityMaker.makeEntityProperty(tableName);
+
+		int idIdx = 0;
+		for (EntityProperty one : entityPropertys) {
+			if (one.isPrimaryKey()) {
+				break;
+			}
+			idIdx++;
+		}
+		
+		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("Mapper.xml.vm", "mapper/" + domainName + "Mapper.xml");
+		map.put("Mapper.xml.vm", "mapping/" + domainName + "Mapper.xml");
 
 		Properties pro = new Properties();
 		pro.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
@@ -102,10 +114,10 @@ public class Main {
 			context.put("domainName", domainName);
 			context.put("packageName", packageName);
 			context.put("entityPropertys", entityPropertys);
-			context.put("idJavaName", entityPropertys.get(0).getJavaName());
-			context.put("idDbName", entityPropertys.get(0).getDbName());
-			context.put("idDbType", entityPropertys.get(0).getDbType());
-			context.put("idJavaType", entityPropertys.get(0).getJavaLongType());
+			context.put("idJavaName", entityPropertys.get(idIdx).getJavaName());
+			context.put("idDbName", entityPropertys.get(idIdx).getDbName());
+			context.put("idDbType", entityPropertys.get(idIdx).getDbType());
+			context.put("idJavaType", entityPropertys.get(idIdx).getJavaLongType());
 			Template t = ve.getTemplate(templateFile, "UTF-8");
 
 			File file = new File(targetPath, targetFile);
